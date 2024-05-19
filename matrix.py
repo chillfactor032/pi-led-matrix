@@ -39,7 +39,7 @@ class LedMatrix():
             img.thumbnail((self.width, self.height))
         else:
             self.gif_thread = threading.Thread(target=self.show_gif, args=(img,))
-            self.start()
+            self.gif_thread.start()
             return
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
