@@ -40,9 +40,9 @@ class LedMatrix():
                     grid_offset = grid_len*0
                 elif x < 16 and y >= 16:
                     grid_offset = grid_len*1
-                elif x > 16 and y >= 16:
+                elif x >= 16 and y >= 16:
                     grid_offset = grid_len*2
-                elif x < 16 and y < 16:
+                elif x >= 16 and y < 16:
                     grid_offset = grid_len*3
                 tx = x % 16
                 ty = y % 16
