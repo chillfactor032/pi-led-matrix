@@ -8,6 +8,7 @@ class Bot(commands.Bot):
     def __init__(self, config):
         self.token = config.get("token", None)
         self.channel = config.get("channel", None)
+        print(self.token)
         super().__init__(token=self.token, prefix='!', initial_channels=[self.channel])
 
     async def event_ready(self):
@@ -60,7 +61,6 @@ def main():
         print(e)
         return
     try:
-        print(config)
         bot = Bot(config)
         bot.run()
     except KeyboardInterrupt:
