@@ -30,19 +30,19 @@ class LedMatrix():
             pixel_order=self.ORDER)
         self.index_map = LedMatrix.gen_index_map(self.height, self.width)
         self.gif_thread = None
-        self._gif_stop = False
+        self.gif_stop_event = threading.Event()
     
     def show_img(self, url):
         self.stop_gif()
         img = self.fetch_img(url)
         if img is None:
             return
-        if img.format != "GIF":
-            img.thumbnail((self.width, self.height))
-        else:
-            self.gif_thread = threading.Thread(target=self.show_gif, args=(img,))
+        if img.format == "GIF":
+            self.gif_stop_event = threading.Event()
+            self.gif_thread = threading.Thread(target=self.show_gif, args=(img,self.gif_stop_event))
             self.gif_thread.start()
             return
+        img.thumbnail((self.width, self.height))
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
         self.update()
@@ -91,20 +91,20 @@ class LedMatrix():
         return pixels
 
     def stop_gif(self):
-        self._gif_stop = False
+        if not self.gif_stop_event.is_set():
+            self.gif_stop_event.set()
         if self.gif_thread is None:
             return
-        print("Waiting for Gif Thread to stop...")
-        self.gif_thread.join()
-        print("Join Done")
+        else:
+            print("Waiting for Gif Thread to stop...")
+            self.gif_thread.join()
+            print("Join Done")
 
-    def show_gif(self, gif_img):
-        print(self._gif_stop)
-        self._gif_stop = True
+    def show_gif(self, gif_img, stop_event: threading.Event):
         imgs = []
         delay_ms = gif_img.info.get("duration", 40)
         try:
-            while True:
+            while not stop_event.is_set():
                 frame = Image.new("RGBA", gif_img.size)
                 frame.paste(gif_img, (0,0), gif_img.convert('RGBA'))
                 frame.thumbnail((self.width, self.height))
