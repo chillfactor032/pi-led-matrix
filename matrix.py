@@ -6,6 +6,12 @@ from io import BytesIO
 from PIL import Image, GifImagePlugin
 GifImagePlugin.LOADING_STRATEGY = GifImagePlugin.LoadingStrategy.RGB_ALWAYS
 
+_USER_AGENT_STRING = ' '.join([
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    'AppleWebKit/537.36 (KHTML, like Gecko)',
+    'Chrome/86.0.4240.75',
+    'Safari/537.36'])
+
 class LedMatrix():
 
     def __init__(self, height, width, pin=board.D18):
@@ -28,7 +34,7 @@ class LedMatrix():
             return
         for x in range(img_pixels):
             self.pixels[x] = img_pixels[x]
-            
+
     def fetch_img_pixels(self, img_url):
         img = None
         if img_url[0:4] == "http":
