@@ -17,6 +17,9 @@ class LedMatrix():
             pixel_order=self.ORDER)
         self.index_map = LedMatrix.gen_index_map(self.height, self.width)
     
+    def clear(self):
+        self.pixels.fill((0,0,0))
+        
     def update(self):
         self.pixels.show()
 
