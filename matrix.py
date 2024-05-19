@@ -14,29 +14,30 @@ _USER_AGENT_STRING = ' '.join([
 
 class LedMatrix():
 
-    def __init__(self, height, width, pin=board.D18):
+    def __init__(self, height, width, **kwargs):
         self.ORDER = neopixel.GRB
-        self.pin = pin
+        self.pin = kwargs.get("pin", board.D18)
         self.height = height
         self.width = width
         self.num_pixels = self.height*self.width
         self.pixels = neopixel.NeoPixel(
             self.pin, 
             self.num_pixels, 
-            brightness=0.2, 
+            brightness=kwargs.get("brightness", 0.2), 
             auto_write=False, 
             pixel_order=self.ORDER)
         self.index_map = LedMatrix.gen_index_map(self.height, self.width)
     
     def show_img(self, url):
-        img_pixels = self.fetch_img_pixels(url)
-        if img_pixels is None:
+        img = self.fetch_img(url)
+        if img is None:
             return
+        img_pixels = self.fetch_img_pixels(img)
         for x in range(len(img_pixels[0])):
             for y in range(len(img_pixels)):
                 self.set_pixel(x, y, img_pixels[x][y])
 
-    def fetch_img_pixels(self, img_url):
+    def fetch_img(self, img_url):
         img = None
         if img_url[0:4] == "http":
             # Naive way to tell if this is a url vs a local file
@@ -48,6 +49,9 @@ class LedMatrix():
                 raise FileNotFoundError("Image File Does Not Exist")
             img = Image.open(img_url)
         img.thumbnail((self.width, self.height))
+        return img
+    
+    def fetch_img_pixels(self, img):
         thumb_w, thumb_h = img.size
         if thumb_h != self.height or thumb_w != self.width:
             return None
