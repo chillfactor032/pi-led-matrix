@@ -92,6 +92,8 @@ class LedMatrix():
 
     def stop_gif(self):
         self._gif_stop = False
+        if self.gif_thread is None:
+            return
         print("Waiting for Gif Thread to stop...")
         self.gif_thread.join()
         print("Join Done")
