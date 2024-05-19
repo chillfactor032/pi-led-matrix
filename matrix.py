@@ -92,12 +92,12 @@ class LedMatrix():
 
     def stop_gif(self):
         self._gif_stop = False
-        if self.gif_thread is not None and not self.gif_thread.done():
-            print("Joining thread")
-            self.gif_thread.join()
-            print("Join Done")
+        print("Waiting for Gif Thread to stop...")
+        self.gif_thread.join()
+        print("Join Done")
 
     def show_gif(self, gif_img):
+        print(self._gif_stop)
         self._gif_stop = True
         imgs = []
         delay_ms = gif_img.info.get("duration", 40)
@@ -152,3 +152,13 @@ class LedMatrix():
                 row.append(index)
             map.append(row)
         return map
+
+class GifPlayer(threading.Thread):
+    def __init__(self):
+        super().__init__()
+        self._stopped = False
+
+    def run(self):
+        pass
+    
+
