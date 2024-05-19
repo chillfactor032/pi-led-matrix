@@ -74,9 +74,6 @@ class LedMatrix():
                 row.append(color)
             pixels.append(row)
         return pixels
-    
-    def fetch_gif_frames():
-
 
     def clear(self):
         self.pixels.fill((0,0,0))
