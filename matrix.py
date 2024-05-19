@@ -50,7 +50,7 @@ class LedMatrix():
             img = Image.open(img_url)
         img.thumbnail((self.width, self.height))
         return img
-    
+
     def fetch_img_pixels(self, img):
         thumb_w, thumb_h = img.size
         if thumb_h != self.height or thumb_w != self.width:
@@ -75,6 +75,9 @@ class LedMatrix():
             pixels.append(row)
         return pixels
     
+    def fetch_gif_frames():
+
+
     def clear(self):
         self.pixels.fill((0,0,0))
 
