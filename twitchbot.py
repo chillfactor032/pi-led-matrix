@@ -1,10 +1,13 @@
+import argparse
+import os
+import json
 from twitchio.ext import commands
 
 class Bot(commands.Bot):
 
-    def __init__(self, token, channel):
-        self.token = token
-        self.channel = channel
+    def __init__(self, config):
+        self.token = config.get("token", None)
+        self.channel = config.get("channel", None)
         super().__init__(token=self.token, prefix='!', initial_channels=[self.channel])
 
     async def event_ready(self):
@@ -36,9 +39,33 @@ class Bot(commands.Bot):
             return True
         return False
 
+def main():
+    parser = argparse.ArgumentParser(
+                            prog='PiLedWallBot',
+                            description='A simple Twitch chatbot to demonstrate led matrix integration',
+                            epilog='by ChillFacToR032')
 
-try:
-    bot = Bot()
-    bot.run()
-except KeyboardInterrupt:
-    print("=== TwitchBot Stopped ===")
+    parser.add_argument("config",
+                        required=True,
+                        help="Path to a config file. See the config_template.json for the format.")
+
+    args = parser.parse_args()
+    if not os.path.isfile(args.config):
+        print("Error: config file does not exists. Create one using config_template.json")
+        return
+    try:
+        config = None
+        with open(args.config) as f:
+            config = json.load(f)
+    except json.JSONDecodeError as e:
+        print("Error decoding config as JSON")
+        print(e)
+        return
+    try:
+        bot = Bot(config)
+        bot.run()
+    except KeyboardInterrupt:
+        print("=== TwitchBot Stopped ===")
+
+if __name__ == '__main__':
+    main()
