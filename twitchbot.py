@@ -45,9 +45,7 @@ def main():
                             description='A simple Twitch chatbot to demonstrate led matrix integration',
                             epilog='by ChillFacToR032')
 
-    parser.add_argument("config",
-                        required=True,
-                        help="Path to a config file. See the config_template.json for the format.")
+    parser.add_argument("config", help="Path to a config file. See the config_template.json for the format.")
 
     args = parser.parse_args()
     if not os.path.isfile(args.config):
