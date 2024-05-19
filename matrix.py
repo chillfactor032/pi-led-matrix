@@ -32,7 +32,7 @@ class LedMatrix():
         img_pixels = self.fetch_img_pixels(url)
         if img_pixels is None:
             return
-        for x in range(img_pixels):
+        for x in range(len(img_pixels)):
             self.pixels[x] = img_pixels[x]
 
     def fetch_img_pixels(self, img_url):
