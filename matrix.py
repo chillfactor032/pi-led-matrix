@@ -29,6 +29,7 @@ class LedMatrix():
             pixel_order=self.ORDER)
         self.index_map = LedMatrix.gen_index_map(self.height, self.width)
         self.gif_thread = None
+        self._gif_stop = False
     
     def show_img(self, url):
         self.stop_gif()
