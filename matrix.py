@@ -32,6 +32,8 @@ class LedMatrix():
         img = self.fetch_img(url)
         if img is None:
             return
+        if img.format != "GIF":
+            img.thumbnail((self.width, self.height))
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
 
@@ -52,7 +54,6 @@ class LedMatrix():
             if not os.path.isfile(img_url):
                 raise FileNotFoundError("Image File Does Not Exist")
             img = Image.open(img_url)
-        img.thumbnail((self.width, self.height))
         return img
 
     def fetch_img_pixels(self, img):
