@@ -33,6 +33,7 @@ class LedMatrix():
         self.gif_stop_event = threading.Event()
     
     def show_img(self, url):
+        """ Show a static or gif image on the led matrix """
         self.stop_gif()
         img = self.fetch_img(url)
         if img is None:
@@ -48,12 +49,14 @@ class LedMatrix():
         self.update()
 
     def set_img_pixels(self, img_pixels):
+        """ Writes a list of image pixel colors to the led matrix """
         if img_pixels is None: return
         for x in range(len(img_pixels[0])):
             for y in range(len(img_pixels)):
                 self.set_pixel(x, y, img_pixels[x][y])
 
     def fetch_img(self, img_url):
+        """ Downloads or loads a local image into a Pillow Image object """
         img = None
         if img_url[0:4] == "http":
             # Naive way to tell if this is a url vs a local file
@@ -67,6 +70,9 @@ class LedMatrix():
         return img
 
     def fetch_img_pixels(self, img):
+        """ Extracts a list of pixel colors out of a Pillow Image object 
+            pixel list returned is in the x,y format
+        """
         thumb_w, thumb_h = img.size
         if thumb_h != self.height or thumb_w != self.width:
             return None
@@ -91,16 +97,18 @@ class LedMatrix():
         return pixels
 
     def stop_gif(self):
+        """ Sends stop event to show_gif thread and clears the leds """
         if not self.gif_stop_event.is_set():
             self.gif_stop_event.set()
         if self.gif_thread is None:
             return
         else:
-            print("Waiting for Gif Thread to stop...")
             self.gif_thread.join()
-            print("Join Done")
+        self.clear()
+        self.update()
 
     def show_gif(self, gif_img, stop_event: threading.Event):
+        """ Thread: animates gif frames on the led matrix """
         imgs = []
         delay_ms = gif_img.info.get("duration", 40)
         try:
@@ -119,6 +127,7 @@ class LedMatrix():
                 time.sleep(0.001)
 
     def clear(self):
+        """ Sets all the led matrix leds to black """
         self.pixels.fill((0,0,0))
 
     def update(self):
@@ -155,12 +164,5 @@ class LedMatrix():
             map.append(row)
         return map
 
-class GifPlayer(threading.Thread):
-    def __init__(self):
-        super().__init__()
-        self._stopped = False
-
-    def run(self):
-        pass
     
 
