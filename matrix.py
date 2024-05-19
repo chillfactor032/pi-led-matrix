@@ -96,7 +96,7 @@ class LedMatrix():
     def show_gif(self, gif_img):
         self._gif_stop = True
         imgs = []
-        delay_ms = img.info.get("duration", 40)
+        delay_ms = gif_img.info.get("duration", 40)
         try:
             while True:
                 frame = Image.new("RGBA", gif_img.size)
