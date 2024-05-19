@@ -36,6 +36,7 @@ class LedMatrix():
         self.set_img_pixels(img_pixels)
 
     def set_img_pixels(self, img_pixels):
+        if img_pixels is None: return
         for x in range(len(img_pixels[0])):
             for y in range(len(img_pixels)):
                 self.set_pixel(x, y, img_pixels[x][y])
