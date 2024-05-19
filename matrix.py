@@ -46,7 +46,7 @@ class LedMatrix():
                     grid_offset = grid_len*3
                 tx = x % 16
                 ty = y % 16
-                offset = 0
+                offset = ty
                 if tx % 2 > 0:
                     offset = (grid_h-1)-ty
                 index = grid_offset + (tx * grid_w) + offset
