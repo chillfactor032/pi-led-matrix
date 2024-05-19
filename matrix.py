@@ -33,9 +33,9 @@ class LedMatrix():
         grid_w = 16
         grid_len = grid_h*grid_w
         map = []
-        for y in range(h):
+        for x in range(w):
             row = []
-            for x in range(w):
+            for y in range(h):
                 if x < 16 and y < 16:
                     grid_offset = grid_len*0
                 elif x < 16 and y >= 16:
