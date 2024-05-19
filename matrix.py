@@ -39,7 +39,7 @@ class LedMatrix():
         img = None
         if img_url[0:4] == "http":
             # Naive way to tell if this is a url vs a local file
-            resp = requests.get(img_url, headers=self.user_agent)
+            resp = requests.get(img_url, headers=_USER_AGENT_STRING)
             resp.raise_for_status()
             img = Image.open(BytesIO(resp.content))
         else:
