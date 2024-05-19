@@ -1,4 +1,5 @@
 import os
+import threading
 import board
 import neopixel
 import requests
@@ -27,13 +28,17 @@ class LedMatrix():
             auto_write=False, 
             pixel_order=self.ORDER)
         self.index_map = LedMatrix.gen_index_map(self.height, self.width)
+        self.gif_thread = None
     
     def show_img(self, url):
+        self.stop_gif()
         img = self.fetch_img(url)
         if img is None:
             return
         if img.format != "GIF":
             img.thumbnail((self.width, self.height))
+        else:
+            self.gif_thread = threading.Thread(target=self.show_gif, args=(img,))
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
 
@@ -79,6 +84,29 @@ class LedMatrix():
                 row.append(color)
             pixels.append(row)
         return pixels
+
+    def stop_gif(self):
+        self._gif_stop = False
+        if self.gif_thread is not None:
+            self.gif_thread.join()
+
+    def show_gif(self, gif_img):
+        self._gif_stop = True
+        imgs = []
+        delay_ms = img.info.get("duration", 40)
+        try:
+            while True:
+                frame = Image.new("RGBA", gif_img.size)
+                frame.paste(gif_img, (0,0), gif_img.convert('RGBA'))
+                frame.thumbnail((self.width, self.height))
+                imgs.append(self.fetch_img_pixels(frame))
+                gif_img.seek(img.tell() + 1)
+        except EOFError:
+            pass
+        while self._gif_stop:
+            for img in imgs:
+                self.set_img_pixels(img)
+                self.update()
 
     def clear(self):
         self.pixels.fill((0,0,0))
