@@ -104,7 +104,7 @@ class LedMatrix():
         imgs = []
         delay_ms = gif_img.info.get("duration", 40)
         try:
-            while not stop_event.is_set():
+            while True:
                 frame = Image.new("RGBA", gif_img.size)
                 frame.paste(gif_img, (0,0), gif_img.convert('RGBA'))
                 frame.thumbnail((self.width, self.height))
@@ -112,7 +112,7 @@ class LedMatrix():
                 gif_img.seek(gif_img.tell() + 1)
         except EOFError:
             pass
-        while self._gif_stop:
+        while not stop_event.is_set():
             for img in imgs:
                 self.set_img_pixels(img)
                 self.update()
