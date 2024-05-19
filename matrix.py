@@ -32,8 +32,9 @@ class LedMatrix():
         img_pixels = self.fetch_img_pixels(url)
         if img_pixels is None:
             return
-        for x in range(len(img_pixels)):
-            self.pixels[x] = img_pixels[x]
+        for x in range(len(img_pixels[0])):
+            for y in range(len(img_pixels)):
+                self.set_pixel(x, y, img_pixels[x][y])
 
     def fetch_img_pixels(self, img_url):
         img = None
@@ -51,8 +52,9 @@ class LedMatrix():
         if thumb_h != self.height or thumb_w != self.width:
             return None
         pixels = []
-        for y in range(self.height):
-            for x in range(self.width):
+        for x in range(self.width):
+            row = []
+            for y in range(self.height):
                 if y >= thumb_h or x >= thumb_w:
                     color = (0, 0, 0)
                     continue
@@ -65,7 +67,8 @@ class LedMatrix():
                         # If transparent, set color to black
                         color = (0, 0, 0)
                     color = (color[0], color[1], color[2])
-                pixels.append(color)
+                row.append(color)
+            pixels.append(row)
         return pixels
     
     def clear(self):
