@@ -1,5 +1,4 @@
 {
-    "bot_name": "<BOT USER>",
     "token": "<TWITCH CHAT BOT TOKEN>",
     "channel": "<CHANNEL>"
 }

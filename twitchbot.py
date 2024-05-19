@@ -1,33 +1,62 @@
 import argparse
 import os
 import json
-from twitchio.ext import commands
+import random
+from twitchio.ext import commands, routines
+from matrix import LedMatrix
 
 class Bot(commands.Bot):
 
     def __init__(self, config):
         self.token = config.get("token", None)
         self.channel = config.get("channel", None)
-        print(self.token)
         super().__init__(token=self.token, prefix='!', initial_channels=[self.channel])
+        self.matrix = LedMatrix(32, 32, brightness=0.03)
+        self.emote_cdn = "https://static-cdn.jtvnw.net/emoticons/v2/<id>/default/dark/4.0"
+        self.emote_buffer_max_size = 10
+        self.emote_buffer = []
 
     async def event_ready(self):
         print("=== TwitchBot Ready ===")
-        print(f'Logged in as | {self.nick}')
-        print(f'User id is | {self.user_id}')
+        print(f"Logged in as | {self.nick}")
+        print(f"Connected Channel: {self.channel}")
+        self.emote_timer.start()
 
     async def event_message(self, message):
         # Ignore messages from the bot itself
         if message.echo: return
-        await self.handle_commands(message)
+        emotes = self.emotes_from_message(message)
+        self.emote_buffer_add(emotes)
 
-    @commands.command()
-    async def mode(self, ctx: commands.Context):
-        if not self.is_priv(ctx.author):
-            # User is not Mod/Broadcaster
-            return
-        await ctx.send(f'Hello {ctx.author.name}!')
+    @routines.routine(seconds=7.0)
+    async def emote_timer(self):
+        if len(self.emote_buffer) > 0:
+            emote_id = random.choice(self.emote_buffer)
+            url = f"https://static-cdn.jtvnw.net/emoticons/v2/{emote_id}/default/dark/4.0"
+            self.matrix.show_img(url)
 
+    def emote_buffer_add(self, emote_list: list):
+        """ Add a list of emotes to the emote buffer. 
+            Remove duplicates and remove the oldest to stay under max.
+            emote_buffer is sorted oldest (head) to most recent (tail).
+        """
+        self.emote_buffer = [x for x in self.emote_buffer if x not in emote_list]
+        for emote in emote_list:
+            self.emote_buffer.append(emote)
+        while len(self.emote_buffer) > self.emote_buffer_max_size:
+            self.emote_buffer.pop(0)
+
+    def emotes_from_message(self, message):
+        """ Return a list of emotes from the message """
+        emotes_in_msg = []
+        emotes_str = message.tags.get("emotes", None)
+        if not emotes_str:
+            return []
+        emotes = emotes_str.split("/")
+        for emote in emotes:
+            emotes_in_msg.append(emote.split(":")[0])
+        return emotes_in_msg
+    
     def is_priv(self, user):
         """ Get the level of the user: tier/mod/broadcaster"""
         if user is None:
