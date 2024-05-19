@@ -103,7 +103,7 @@ class LedMatrix():
                 frame.paste(gif_img, (0,0), gif_img.convert('RGBA'))
                 frame.thumbnail((self.width, self.height))
                 imgs.append(self.fetch_img_pixels(frame))
-                gif_img.seek(img.tell() + 1)
+                gif_img.seek(gif_img.tell() + 1)
         except EOFError:
             pass
         while self._gif_stop:
