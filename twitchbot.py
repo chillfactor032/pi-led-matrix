@@ -60,6 +60,7 @@ def main():
         print(e)
         return
     try:
+        print(config)
         bot = Bot(config)
         bot.run()
     except KeyboardInterrupt:
