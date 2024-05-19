@@ -90,9 +90,8 @@ class LedMatrix():
         return pixels
 
     def stop_gif(self):
-        print("Stop Gif")
         self._gif_stop = False
-        if self.gif_thread is not None:
+        if self.gif_thread is not None and not self.gif_thread.done():
             print("Joining thread")
             self.gif_thread.join()
             print("Join Done")
