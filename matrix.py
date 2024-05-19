@@ -19,7 +19,7 @@ class LedMatrix():
     
     def clear(self):
         self.pixels.fill((0,0,0))
-        
+
     def update(self):
         self.pixels.show()
 
@@ -52,3 +52,4 @@ class LedMatrix():
                 index = grid_offset + (tx * grid_w) + offset
                 row.append(index)
             map.append(row)
+        return map
