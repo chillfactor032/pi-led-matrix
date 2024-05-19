@@ -1,5 +1,6 @@
 import os
 import threading
+import time
 import board
 import neopixel
 import requests
@@ -113,6 +114,7 @@ class LedMatrix():
             for img in imgs:
                 self.set_img_pixels(img)
                 self.update()
+                time.sleep(0.001)
 
     def clear(self):
         self.pixels.fill((0,0,0))
