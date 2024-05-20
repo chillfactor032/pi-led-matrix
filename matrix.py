@@ -43,9 +43,7 @@ class LedMatrix():
             self.gif_thread = threading.Thread(target=self.show_gif, args=(img,self.gif_stop_event))
             self.gif_thread.start()
             return
-        print(f"Before Resize Emote Size: {url} - {img.width},{img.height}")
         img.thumbnail((self.width, self.height))
-        print(f"After Resize Emote Size: {url} - {img.width},{img.height}")
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
         self.update()
@@ -118,21 +116,22 @@ class LedMatrix():
     def show_gif(self, gif_img, stop_event: threading.Event):
         """ Thread: animates gif frames on the led matrix """
         imgs = []
-        delay_ms = gif_img.info.get("duration", 40)
         try:
             while True:
                 frame = Image.new("RGBA", gif_img.size)
                 frame.paste(gif_img, (0,0), gif_img.convert('RGBA'))
                 frame.thumbnail((self.width, self.height))
-                imgs.append(self.fetch_img_pixels(frame))
+                imgs.append([self.fetch_img_pixels(frame), gif_img.info.get("duration", 0)])
                 gif_img.seek(gif_img.tell() + 1)
         except EOFError:
             pass
         while not stop_event.is_set():
             for img in imgs:
-                self.set_img_pixels(img)
+                frame_time = time.time()
+                self.set_img_pixels(img[0])
                 self.update()
-                time.sleep(0.001)
+                sleep = max(img[0] - (time.time() - frame_time), 0)
+                time.sleep(sleep)
 
     def clear(self):
         """ Sets all the led matrix leds to black """
