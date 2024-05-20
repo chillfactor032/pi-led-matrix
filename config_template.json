@@ -1,4 +1,5 @@
 {
     "token": "<TWITCH CHAT BOT TOKEN>",
-    "channel": "<CHANNEL>"
+    "channel": "<CHANNEL>",
+    "emote_cache_dir": "/path/emote/cache"
 }

@@ -2,6 +2,8 @@ import argparse
 import os
 import json
 import random
+import threading
+import requests
 from twitchio.ext import commands, routines
 from matrix import LedMatrix
 
@@ -15,6 +17,7 @@ class Bot(commands.Bot):
         self.emote_cdn = "https://static-cdn.jtvnw.net/emoticons/v2/<id>/default/dark/4.0"
         self.emote_buffer_max_size = 10
         self.emote_buffer = []
+        self.emote_cache_dir = config.get("emote_cache_dir", "/tmp")
 
     async def event_ready(self):
         print("=== TwitchBot Ready ===")
@@ -26,14 +29,18 @@ class Bot(commands.Bot):
         # Ignore messages from the bot itself
         if message.echo: return
         emotes = self.emotes_from_message(message)
-        self.emote_buffer_add(emotes)
+        for emote in emotes:
+            x = threading.Thread(target=self.download_emote, args=(emote,))
+            x.start()
 
     @routines.routine(seconds=7.0)
     async def emote_timer(self):
+        print("Emote Size: "+len(self.emote_buffer))
         if len(self.emote_buffer) > 0:
             emote_id = random.choice(self.emote_buffer)
-            url = f"https://static-cdn.jtvnw.net/emoticons/v2/{emote_id}/default/dark/4.0"
-            self.matrix.show_img(url)
+            path = os.path.join(self.emote_cache_dir, emote_id)
+            #url = f"https://static-cdn.jtvnw.net/emoticons/v2/{emote_id}/default/dark/4.0"
+            self.matrix.show_img(path)
 
     def emote_buffer_add(self, emote_list: list):
         """ Add a list of emotes to the emote buffer. 
@@ -57,6 +64,23 @@ class Bot(commands.Bot):
             emotes_in_msg.append(emote.split(":")[0])
         return emotes_in_msg
     
+    def download_emote(self, emote_id):
+        url = self.emote_cdn.replace("<id>", emote_id)
+        path = os.path.join(self.emote_cache_dir, emote_id)
+        if os.path.exists(path):
+            return
+        resp = requests.get(url)
+        if resp.status_code >= 300:
+            return None
+        try:
+            with open(path, "wb") as f:
+                f.write(resp.content)
+        except Exception as e:
+            print("Error downloading emote")
+            print(e)
+        self.emote_buffer_add([emote_id])
+
+
     def is_priv(self, user):
         """ Get the level of the user: tier/mod/broadcaster"""
         if user is None:
