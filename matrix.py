@@ -130,7 +130,7 @@ class LedMatrix():
                 frame_time = time.time()
                 self.set_img_pixels(img[0])
                 self.update()
-                sleep = max(img[0] - (time.time() - frame_time), 0)
+                sleep = max(img[1] - (time.time() - frame_time), 0)
                 time.sleep(sleep)
 
     def clear(self):
