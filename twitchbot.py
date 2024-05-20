@@ -35,7 +35,7 @@ class Bot(commands.Bot):
 
     @routines.routine(seconds=7.0)
     async def emote_timer(self):
-        print("Emote Size: "+len(self.emote_buffer))
+        print("Emote Size: "+str(len(self.emote_buffer)))
         if len(self.emote_buffer) > 0:
             emote_id = random.choice(self.emote_buffer)
             path = os.path.join(self.emote_cache_dir, emote_id)
