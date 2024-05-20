@@ -128,10 +128,10 @@ class LedMatrix():
         
         while not stop_event.is_set():
             for img in imgs:
-                target_time = time.time()+img[1]
+                target_time_secs = time.time()+(img[1]/1000.0)
                 self.set_img_pixels(img[0])
                 self.update()
-                while target_time >= time.time():
+                while target_time_secs >= time.time():
                     pass
 
     def clear(self):
