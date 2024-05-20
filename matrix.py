@@ -79,8 +79,8 @@ class LedMatrix():
             pixel list returned is in the x,y format
         """
         thumb_w, thumb_h = img.size
-        if thumb_h != self.height or thumb_w != self.width:
-            return None
+        #if thumb_h != self.height or thumb_w != self.width:
+        #    return None
         pixels = []
         for x in range(self.width):
             row = []
