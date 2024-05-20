@@ -131,7 +131,7 @@ class LedMatrix():
                 target_time = time.time()+img[1]
                 self.set_img_pixels(img[0])
                 self.update()
-                while time.time() < target_time:
+                while target_time >= time.time():
                     pass
 
     def clear(self):
