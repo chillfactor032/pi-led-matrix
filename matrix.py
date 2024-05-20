@@ -53,8 +53,8 @@ class LedMatrix():
     def set_img_pixels(self, img_pixels):
         """ Writes a list of image pixel colors to the led matrix """
         if img_pixels is None: return
-        for x in range(len(img_pixels[0])):
-            for y in range(len(img_pixels)):
+        for x in range(self.width):
+            for y in range(self.height):
                 try:
                     self.set_pixel(x, y, img_pixels[x][y])
                 except IndexError:
