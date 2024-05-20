@@ -126,17 +126,13 @@ class LedMatrix():
         except EOFError:
             pass
         
-        sleeps = []
         while not stop_event.is_set():
             for img in imgs:
-                frame_time = time.time()
+                target_time = time.time()+img[1]
                 self.set_img_pixels(img[0])
                 self.update()
-                sleep = max(img[1] - (time.time() - frame_time), 0)
-                sleeps.append([img[1], sleep])
-                time.sleep(sleep/1000.0)
-        for sleep in sleeps:
-            print(f"Duration From Gif:{sleep[0]}, Actual Sleep: {sleep[1]}")
+                while time.time() < target_time:
+                    pass
 
     def clear(self):
         """ Sets all the led matrix leds to black """
