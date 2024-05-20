@@ -43,7 +43,9 @@ class LedMatrix():
             self.gif_thread = threading.Thread(target=self.show_gif, args=(img,self.gif_stop_event))
             self.gif_thread.start()
             return
+        print(f"Before Resize Emote Size: {url} - {img.width},{img.height}")
         img.thumbnail((self.width, self.height))
+        print(f"After Resize Emote Size: {url} - {img.width},{img.height}")
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
         self.update()
@@ -68,6 +70,9 @@ class LedMatrix():
                 raise FileNotFoundError("Image File Does Not Exist")
             img = Image.open(img_url)
         return img
+
+    def scale_image(self, img):
+        pass
 
     def fetch_img_pixels(self, img):
         """ Extracts a list of pixel colors out of a Pillow Image object 
