@@ -125,6 +125,7 @@ class LedMatrix():
                 gif_img.seek(gif_img.tell() + 1)
         except EOFError:
             pass
+        print(imgs)
         while not stop_event.is_set():
             for img in imgs:
                 frame_time = time.time()
