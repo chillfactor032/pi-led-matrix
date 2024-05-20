@@ -131,7 +131,7 @@ class LedMatrix():
                 self.set_img_pixels(img[0])
                 self.update()
                 sleep = max(img[1] - (time.time() - frame_time), 0)
-                time.sleep(sleep)
+                time.sleep(sleep/1000.0)
 
     def clear(self):
         """ Sets all the led matrix leds to black """
