@@ -55,7 +55,10 @@ class LedMatrix():
         if img_pixels is None: return
         for x in range(len(img_pixels[0])):
             for y in range(len(img_pixels)):
-                self.set_pixel(x, y, img_pixels[x][y])
+                try:
+                    self.set_pixel(x, y, img_pixels[x][y])
+                except IndexError:
+                    self.set_pixel(x, y, (0,0,0))
 
     def fetch_img(self, img_url):
         """ Downloads or loads a local image into a Pillow Image object """
