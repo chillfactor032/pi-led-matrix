@@ -68,16 +68,19 @@ class Bot(commands.Bot):
         url = self.emote_cdn.replace("<id>", emote_id)
         path = os.path.join(self.emote_cache_dir, emote_id)
         if os.path.exists(path):
+            self.emote_buffer_add([emote_id])
             return
         resp = requests.get(url)
         if resp.status_code >= 300:
             return None
         try:
+            print(f"Downloaded Emote: {emote_id}")
             with open(path, "wb") as f:
                 f.write(resp.content)
         except Exception as e:
             print("Error downloading emote")
             print(e)
+            return
         self.emote_buffer_add([emote_id])
 
 
