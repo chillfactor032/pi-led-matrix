@@ -28,6 +28,7 @@ class LedMatrix():
             brightness=kwargs.get("brightness", 0.2), 
             auto_write=False, 
             pixel_order=self.ORDER)
+        self.font_name = kwargs.get("font", "DejaVuSansMono.ttf")
         self.index_map = LedMatrix.gen_index_map(self.height, self.width)
         self.gif_thread = None
         self.gif_stop_event = threading.Event()
@@ -78,7 +79,7 @@ class LedMatrix():
     def draw_text(self, text: str):
         img = Image.new("RGBA", (32,32))
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("arial.ttf", 15)
+        font = ImageFont.truetype(self.font_name, 15)
         draw.text((10, 25), "world", font=font)
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
