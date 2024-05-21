@@ -5,7 +5,7 @@ import board
 import neopixel
 import requests
 from io import BytesIO
-from PIL import Image, GifImagePlugin
+from PIL import Image, GifImagePlugin, ImageFont, ImageDraw
 GifImagePlugin.LOADING_STRATEGY = GifImagePlugin.LoadingStrategy.RGB_ALWAYS
 
 _USER_AGENT_STRING = ' '.join([
@@ -74,6 +74,15 @@ class LedMatrix():
 
     def scale_image(self, img):
         pass
+
+    def draw_text(self, text: str):
+        img = Image.new("RGBA", (32,32))
+        draw = ImageDraw.Draw(img)
+        font = ImageFont.truetype("arial.ttf", 15)
+        draw.text((10, 25), "world", font=font)
+        img_pixels = self.fetch_img_pixels(img)
+        self.set_img_pixels(img_pixels)
+        self.update()
 
     def fetch_img_pixels(self, img):
         """ Extracts a list of pixel colors out of a Pillow Image object 
