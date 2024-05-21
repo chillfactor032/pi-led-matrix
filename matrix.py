@@ -80,7 +80,7 @@ class LedMatrix():
         img = Image.new("RGBA", (32,32))
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype(self.font_name, 15)
-        draw.text((10, 25), "world", font=font)
+        draw.text((10, 25), text, font=font, fill=(255, 255, 255, 255))
         img_pixels = self.fetch_img_pixels(img)
         self.set_img_pixels(img_pixels)
         self.update()
